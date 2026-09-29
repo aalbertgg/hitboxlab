@@ -1,1 +1,1 @@
-https://hitboxlab.vercel.app/
+https://hitboxlabrl.vercel.app/
