@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="es" class="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#0b0f1f">
+<title>Hitbox Lab | Comparador de coches de Rocket League</title>
+<meta name="description" content="Compara los hitboxes de los coches de Rocket League: dimensiones, rendimiento, bocetos a escala y cómo conseguir cada coche. Web de fans no oficial.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E🚗%3C/text%3E%3C/svg%3E">
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Rajdhani:wght@400;500;600;700&family=Caveat:wght@500;700&display=swap" rel="stylesheet">
+<script>
+tailwind.config = { theme: { extend: {
+  fontFamily: { display: ['Orbitron','ui-sans-serif','system-ui','sans-serif'], sans: ['Rajdhani','ui-sans-serif','system-ui','sans-serif'] },
+  colors: { 'team-blue':'#33b5ff','team-orange':'#ff8a3d', background:'#0b0f1f', foreground:'#eef2fb', card:'#121830',
+            secondary:'#1a2140', 'muted-foreground':'#9aa5c0', border:'#1f2a48' } } } };
+</script>
+<style>
+  :root { color-scheme: dark; }
+  body { background-color:#0b0f1f; color:#eef2fb; font-family:'Rajdhani',ui-sans-serif,system-ui,sans-serif;
+    background-image: radial-gradient(60rem 30rem at 0% 0%, rgba(51,181,255,.14), transparent 60%), radial-gradient(60rem 30rem at 100% 0%, rgba(255,138,61,.12), transparent 60%);
+    background-attachment: fixed; }
+  .grid-bg { background-image: linear-gradient(rgba(120,170,230,.07) 1px, transparent 1px), linear-gradient(90deg, rgba(120,170,230,.07) 1px, transparent 1px); background-size:32px 32px; }
+  .glow-blue { box-shadow: 0 0 18px rgba(51,181,255,.55), 0 0 2px #33b5ff; }
+  .glow-orange { box-shadow: 0 0 18px rgba(255,138,61,.55), 0 0 2px #ff8a3d; }
+  .clip-corner { clip-path: polygon(0 0, calc(100% - 18px) 0, 100% 18px, 100% 100%, 18px 100%, 0 calc(100% - 18px)); }
+  select.sel { appearance:none; -webkit-appearance:none; cursor:pointer;
+    background: rgba(11,15,31,.7) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='none' stroke='%239aa5c0' stroke-width='2'%3E%3Cpath d='m3 6 5 5 5-5'/%3E%3C/svg%3E") no-repeat right 1rem center; }
+  select.sel option, select.sel optgroup { background:#121830; color:#eef2fb; }
+  select.sel:focus-visible, button:focus-visible { outline:2px solid #33b5ff; outline-offset:2px; }
+  #sel-orange:focus-visible { outline-color:#ff8a3d; }
+  .sk text { font-family:'Caveat','Comic Sans MS',cursive; font-size:19px; fill:#eef2fb; stroke:none; }
+  .sk text.t { fill:#ff8a3d; font-size:20px; } .sk text.cap { fill:#9aa5c0; font-size:16px; }
+  @media (prefers-reduced-motion: reduce) { * { transition:none !important; } }
+</style>
+</head>
+<body class="antialiased">
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><filter id="wobble"><feTurbulence type="fractalNoise" baseFrequency="0.035" numOctaves="2" seed="4" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="3"/></filter></svg>
+<main class="mx-auto flex min-h-screen w-full max-w-7xl flex-col gap-10 px-4 py-8 sm:px-6 lg:py-12">
+  <header class="flex flex-col gap-6">
+    <div class="flex items-center gap-3">
+      <span class="flex h-9 w-9 items-center justify-center rounded-md border border-team-blue/50 bg-team-blue/10 glow-blue text-team-blue" id="logo"></span>
+      <span class="font-display text-sm font-bold uppercase tracking-[0.3em]">Hitbox<span class="text-team-orange">Lab</span></span>
+    </div>
+    <div class="flex flex-col gap-3">
+      <h1 class="text-balance font-display text-3xl font-black uppercase leading-tight sm:text-5xl">Comparador de coches
+        <span class="bg-gradient-to-r from-team-blue to-team-orange bg-clip-text text-transparent">Rocket League</span></h1>
+      <p class="max-w-2xl text-pretty text-lg text-muted-foreground">Elige dos coches, enfrenta sus hitboxes y descubre cuál encaja mejor con tu estilo de juego.</p>
+    </div>
+  </header>
+
+  <div id="app" class="flex flex-col gap-8"></div>
+  <div id="extra" class="flex flex-col gap-14"></div>
+
+  <footer class="flex flex-col gap-5 border-t border-border pt-6 text-sm text-muted-foreground">
+    <div class="flex flex-col items-start gap-3 sm:flex-row sm:items-center sm:justify-between">
+      <p class="max-w-xl text-base">¿Te ha servido? Esta web es gratis y la mantengo por afición. Si quieres, puedes apoyarla con un café.</p>
+      <a href="https://ko-fi.com/albertgg" target="_blank" rel="noopener noreferrer" class="clip-corner inline-flex shrink-0 items-center gap-2 border border-team-orange/50 bg-team-orange/10 px-5 py-3 font-display text-xs font-bold uppercase tracking-[0.2em] text-team-orange transition-colors hover:bg-team-orange/20">
+        <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M17 8h1a4 4 0 1 1 0 8h-1"/><path d="M3 8h14v9a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4Z"/><path d="M6 2v2M10 2v2M14 2v2"/></svg>
+        Invítame a un café</a>
+    </div>
+    <p><strong class="text-foreground">Web de fans, no oficial.</strong> No está afiliada, patrocinada ni respaldada por Psyonix, Epic Games ni Rocket League. Rocket League y los nombres de los coches son marcas de sus respectivos propietarios.</p>
+    <p>Dimensiones en unidades de Unreal (uu). Las valoraciones de rendimiento son orientativas y se basan en la forma de cada hitbox. Los coches que comparten hitbox se comportan igual en el juego. Datos recopilados de fuentes de la comunidad como Rocket League Wiki, Dignitas y Esports Tales, a septiembre de 2026: los precios, la disponibilidad de coches y los porcentajes del RLCS cambian con frecuencia, así que comprueba la tienda del juego antes de comprar.</p>
+  </footer>
+</main>
+
+<script>
+// ================= BASE DE DATOS =================
+const PERF = { control:'Control de balón', aerial:'Juego aéreo', fifty:'Choques 50/50', reach:'Alcance de tiro', stability:'Estabilidad' };
+const HB = {
+  octane: { name:'Octane', tagline:'La todoterreno', length:118.01, width:84.20, height:36.16, angle:-0.55,
+    perf:{control:88,aerial:92,fifty:82,reach:70,stability:80},
+    desc:'Hitbox compacta y alta, casi cúbica. Es la más equilibrada del juego y la favorita de la escena competitiva gracias a su versatilidad en cualquier posición.',
+    pros:['Gran altura que facilita los 50/50 y bloquear tiros','Rotación aérea muy predecible por su forma compacta','Excelente para dribbles en el techo y control cercano'],
+    cons:['Menor longitud: cuesta más alcanzar balones lejanos','Tiros potentes algo menos fáciles que con hitboxes largas'],
+    ideal:['Jugadores polivalentes','Aéreos','Dribbling'] },
+  dominus: { name:'Dominus', tagline:'Maestra del flick', length:127.93, width:83.28, height:31.30, angle:-0.97,
+    perf:{control:80,aerial:78,fifty:76,reach:90,stability:78},
+    desc:'Larga y plana, con un morro amplio que genera golpes muy potentes. Ideal para quienes buscan tiros fuertes y flicks devastadores.',
+    pros:['Superficie superior plana perfecta para flicks','Golpes potentes gracias a su longitud','Buen alcance en tiros y despejes'],
+    cons:['Menor altura: pierde más 50/50 frente a Octane o Merc','Giros en el aire algo más lentos por su longitud'],
+    ideal:['Delanteros','Flicks','Tiros potentes'] },
+  plank: { name:'Plank', tagline:'Plana y letal', length:128.82, width:84.67, height:29.39, angle:-0.34,
+    perf:{control:72,aerial:74,fifty:70,reach:95,stability:70},
+    desc:'La hitbox más baja y ancha del juego. Su perfil tan plano la convierte en una tabla perfecta para pinches, desvíos y tiros al ras del suelo.',
+    pros:['Máximo alcance frontal para desvíos y redirecciones','Perfil muy bajo ideal para pinches y tiros rasos','Gran anchura para cubrir más portería'],
+    cons:['La más débil en 50/50 por su poca altura','Control de balón en el techo más difícil'],
+    ideal:['Pinches','Redirecciones','Juego ofensivo'] },
+  breakout: { name:'Breakout', tagline:'Precisión afilada', length:131.49, width:80.52, height:30.30, angle:-0.98,
+    perf:{control:74,aerial:76,fifty:68,reach:92,stability:72},
+    desc:'La hitbox más larga y estrecha. Su morro puntiagudo permite golpes muy precisos y controlados, aunque exige más puntería.',
+    pros:['La mayor longitud del juego para llegar a todo','Golpes precisos por su punta estrecha','Excelente para tiros de volea y aéreos lejanos'],
+    cons:['Estrecha: más fácil fallar el balón por los lados','Débil en choques directos y 50/50'],
+    ideal:['Tiradores precisos','Aéreos largos','Voleas'] },
+  hybrid: { name:'Hybrid', tagline:'Lo mejor de ambos mundos', length:127.02, width:82.19, height:34.16, angle:-0.55,
+    perf:{control:82,aerial:84,fifty:78,reach:84,stability:82},
+    desc:'Un punto medio entre Octane y Dominus: casi tan larga como la Dominus pero con más altura. Ofrece equilibrio entre control y potencia.',
+    pros:['Balance entre altura para 50/50 y longitud para tiros','Muy consistente en el juego aéreo','Buena para flicks sin sacrificar defensa'],
+    cons:['No destaca en ninguna faceta específica','Algo menos ágil que la Octane en giros cortos'],
+    ideal:['Equilibrio','Mediocampistas','Air dribbles'] },
+  merc: { name:'Merc', tagline:'El tanque', length:120.72, width:76.71, height:41.66, angle:0.28,
+    perf:{control:76,aerial:68,fifty:94,reach:62,stability:90},
+    desc:'La hitbox más alta del juego, con forma de furgoneta. Domina los choques, los bloqueos y las demoliciones, pero es menos ágil en el aire.',
+    pros:['La mayor altura: gana la mayoría de 50/50','Perfecta para bloquear tiros y defender','Muy estable en demoliciones y juego físico'],
+    cons:['La más estrecha: menor superficie lateral','Menos precisa y ágil en jugadas aéreas'],
+    ideal:['Defensa','Demoliciones','Juego físico'] }
+};
+const LISTS = {
+  octane:['Octane','Fennec','Backfire','Takumi','Dominus GT','Road Hog','Bone Shaker','Dingo','Twinzer','Octane ZSR'],
+  dominus:['Dominus','BMW M240i','McLaren 570S','Diestro','Hotshot','Nissan Fairlady Z','Porsche 911 Turbo','Lamborghini Huracán STO','Imperator DT5','Werewolf'],
+  plank:["'16 Batmobile",'Mantis','Sentinel','Paladin','Centio V17','Artemis','Twin Mill III','Artemis GXT','Artemis G1'],
+  breakout:['Breakout','Breakout Type-S','Animus GP','Cyclone','Komodo','Samurai'],
+  hybrid:['Endo',"'99 Nissan Skyline GT-R R34",'Tesla Cybertruck','X-Devil','X-Devil MK2','Nimbus','Esper','Venom','Jäger 619 RS','Insidio'],
+  merc:['Merc','Battle Bus']
+};
+const CARS = Object.entries(LISTS).flatMap(([hb, n]) => n.map(name => ({ name, hb })));
+const carByName = n => CARS.find(c => c.name === n);
+const HOW = {
+  'Octane':'Coche por defecto, gratis desde el inicio.','Fennec':'Blueprints, Item Shop (500 créditos), Trade-Ins o Drops.','Backfire':'New Driver Challenges (F2P) o completando partidos.','Takumi':'Drops, Item Shop, Trade-Ins o Blueprints.','Dominus GT':'Blueprints, Item Shop (500 créditos) o Trade-Ins.','Road Hog':'New Driver Challenges (F2P) o completando partidos.','Bone Shaker':'Item Shop (pack DLC de Hot Wheels), disponible ocasionalmente.','Dingo':'Blueprints (Auriga Series), Item Shop (500 créditos), Trade-Ins o Drops.','Twinzer':'Blueprints, Trade-Ins o Item Shop.','Octane ZSR':'Blueprints (Champions Crate 4), Trade-Ins o Item Shop.',
+  'Dominus':'Gratis para todos los jugadores.','BMW M240i':'Item Shop, bundle BMW M240i (1,100 créditos).','McLaren 570S':'Item Shop, bundle McLaren 570S (2,000 créditos).','Diestro':'Blueprints (Ferocity Series), Item Shop (500 créditos) o Trade-Ins.','Hotshot':'New Driver Challenges (F2P).','Nissan Fairlady Z':'Rocket Pass Premium, temporada 15. Ya no disponible.','Porsche 911 Turbo':'Rocket Pass Premium, temporada 12. Ya no disponible.','Lamborghini Huracán STO':'Item Shop, bundle (2,000 créditos).','Imperator DT5':'Blueprints (Velocity Crate), Trade-Ins o Item Shop.','Werewolf':'Blueprints (Victory Crate), Trade-Ins o Item Shop.',
+  "'16 Batmobile":'Item Shop: Batman Halloween Bundle (2,000 créditos) o bundle individual (800).','Mantis':'Blueprints (Nitro Crate), Item Shop (500 créditos) o Trade-Ins.','Sentinel':'Blueprints (Vindicator Crate), Item Shop (500 créditos) o Trade-Ins.','Paladin':'New Driver Challenges (F2P) o completando partidos.','Centio V17':'Blueprints (Overdrive Crate), Trade-Ins o Item Shop.','Artemis':'Rocket Pass 2 (Premium). Ya no disponible.','Twin Mill III':'DLC Hot Wheels (Legacy). Ya no disponible directamente.','Artemis GXT':'Variante GXT del Rocket Pass 2. Ya no disponible.','Artemis G1':'Variante G1 del Rocket Pass 2. Ya no disponible.',
+  'Breakout':'Coche por defecto, gratis desde el inicio.','Breakout Type-S':'Blueprints (Champions Crate 3), Trade-Ins o Item Shop.','Animus GP':'Blueprints (Overdrive Crate / Golden Gift Series), Item Shop (500 créditos) o Trade-Ins.','Cyclone':'Blueprints (Zephyr Crate), Trade-Ins o Item Shop.','Komodo':'Blueprints, Item Shop o Trade-Ins. Clasificado como Exotic.','Samurai':'Blueprints (Triumph Crate), Trade-Ins o Item Shop.',
+  'Endo':'Blueprints (Turbo Crate / Golden Egg Series), Item Shop (500 créditos) o Trade-Ins.',"'99 Nissan Skyline GT-R R34":'Item Shop, Fast & Furious Bundle (2,800 créditos); también vía Fortnite.','Tesla Cybertruck':'Evento Summer Road Trip (julio-agosto 2024) o bundle (2,800 créditos). Ya no disponible.','X-Devil':'New Driver Challenges (F2P).','X-Devil MK2':'Blueprints (Champions Crate 2), Trade-Ins o Item Shop.','Nimbus':'Blueprints (Elevation Crate), Trade-Ins o Item Shop.','Esper':'Drops, Item Shop o Trade-Ins.','Venom':'New Driver Challenges (F2P) o completando partidos.','Jäger 619 RS':'Blueprints (Accelerator Crate), Trade-Ins o Item Shop.','Insidio':'Blueprints, Trade-Ins o Item Shop.',
+  'Merc':'Coche por defecto, gratis desde el inicio.','Battle Bus':'Gratis en la página de Add-Ons de Epic Games Store (evento Llama-Rama).'
+};
+const TOP = { octane:['Fennec','72% de los pros en RLCS 2025 (el Octane clásico, 18%)'], dominus:['Dominus','7% de los pros en RLCS 2025'], plank:["'16 Batmobile",'Históricamente el DLC más popular'], breakout:['Breakout','Uso ocasional'], hybrid:['Endo','Popular entre freestylers'], merc:['Merc','Uso muy nicho'] };
+const TOTAL = { octane:'37+', dominus:'50+', plank:'9', breakout:'6', hybrid:'13', merc:'2' };
+const TOP10 = [
+  ['Fennec','Octane','S','72% en RLCS 2025'],['Octane','Octane','S','18% en RLCS 2025'],['Dominus','Dominus','A','7% en RLCS 2025'],['Breakout','Breakout','A','Uso ocasional'],['Endo','Hybrid','A','Popular entre freestylers'],
+  ["'16 Batmobile",'Plank','B','Históricamente #1 DLC'],['Mantis','Plank','B','Popular en OCE'],['Takumi','Octane','A','Uso por pros alternativos'],['Dingo','Octane','B','Creciendo en popularidad'],["'99 Nissan Skyline GT-R R34",'Hybrid','A','Popular entre fans de Fast & Furious']
+];
+const METHODS = [
+  ['Coches por defecto','Octane, Breakout y Merc están disponibles desde el primer momento.'],
+  ['New Driver Challenges','Completarlos desbloquea Backfire, Gizmo, Road Hog, X-Devil, Dominus, Hotshot, Paladin y Venom.'],
+  ['Blueprints','Tras una partida puede caer un Blueprint que se construye con créditos (500-800). Es el método principal para los coches Import.'],
+  ['Item Shop','Rotación diaria o semanal con coches a la venta por créditos (500-2,800 según el bundle).'],
+  ['Trade-Ins','Intercambiar 5 objetos Very Rare da opción a un coche Import.'],
+  ['Trading entre jugadores','Intercambio directo de coches con otros jugadores.'],
+  ['Rocket Pass Premium','Coches de temporada (1,000 créditos). Algunos ya no están disponibles al terminar la temporada.'],
+  ['Eventos especiales','Llama-Rama (Battle Bus), Summer Road Trip (Cybertruck) o Haunted Hallows (Batmobiles), por tiempo limitado.'],
+  ['Drops','Recompensas de torneos diarios o semanales y de eventos, que pueden incluir coches.'],
+  ['Epic Games Store','Algunos coches, como el Battle Bus, se reclaman gratis en la página de Add-Ons.'],
+  ['Cross-game con Fortnite','Nissan Skyline, Tesla Cybertruck y BMW M240i pueden desbloquearse comprándolos en Fortnite con la cuenta de Epic vinculada.']
+];
+const MAXD = { length:131.49, width:84.67, height:41.66, angle:0.98 };
+
+// ================= UTILIDADES =================
+const $ = id => document.getElementById(id);
+const ico = (p, c='h-4 w-4') => `<svg class="${c}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${p}</svg>`;
+const I = { gauge:'<path d="m12 14 4-4"/><path d="M3.34 19a10 10 0 1 1 17.32 0"/>', swap:'<path d="M8 3 4 7l4 4"/><path d="M4 7h16"/><path d="m16 21 4-4-4-4"/><path d="M20 17H4"/>',
+  check:'<path d="M20 6 9 17l-5-5"/>', minus:'<path d="M5 12h14"/>', target:'<circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/>' };
+$('logo').innerHTML = ico(I.gauge, 'h-5 w-5');
+
+const T = {
+  blue:   { text:'text-team-blue', bg:'bg-team-blue', glow:'glow-blue', label:'Equipo Azul', border:'border-team-blue/40', box:'border-team-blue bg-team-blue/15 glow-blue', tag:'border-team-blue/40 bg-team-blue/10 text-team-blue', sel:'border-team-blue/50' },
+  orange: { text:'text-team-orange', bg:'bg-team-orange', glow:'glow-orange', label:'Equipo Naranja', border:'border-team-orange/40', box:'border-team-orange bg-team-orange/15 glow-orange', tag:'border-team-orange/40 bg-team-orange/10 text-team-orange', sel:'border-team-orange/50' }
+};
+const state = { blue:'Octane', orange:'Dominus' };
+const hbOf = t => HB[carByName(state[t]).hb];
+
+// ================= ESTRUCTURA =================
+function figure(label, id, team) {
+  return `<figure class="flex flex-col gap-1.5"><figcaption class="font-display text-[10px] uppercase tracking-[0.2em] text-muted-foreground">${label}</figcaption>
+  <div class="grid-bg flex items-center justify-center rounded-md border border-border bg-background/60" style="aspect-ratio:140/95"><div id="${id}-${team}" class="rounded-sm border-2 transition-all duration-700 ease-out ${T[team].box}"></div></div></figure>`;
+}
+function panel(team) {
+  const s = T[team];
+  const opts = Object.entries(LISTS).map(([k, n]) => `<optgroup label="${HB[k].name}">${n.map(x => `<option value="${x}" ${x===state[team]?'selected':''}>${x}</option>`).join('')}</optgroup>`).join('');
+  return `<section aria-label="${s.label}" class="clip-corner relative flex flex-col gap-5 border ${s.border} bg-card/80 p-5 backdrop-blur-sm sm:p-6 lg:sticky lg:top-6">
+    <div class="absolute inset-x-0 top-0 h-0.5 ${s.bg} ${s.glow}"></div>
+    <div class="flex items-center justify-between gap-3">
+      <label for="sel-${team}" class="whitespace-nowrap font-display text-xs font-bold uppercase tracking-[0.2em] ${s.text}">${s.label}</label>
+      <span id="tag-${team}" class="whitespace-nowrap rounded-sm border border-border bg-secondary px-2 py-0.5 font-display text-[10px] uppercase tracking-wider text-muted-foreground"></span>
+    </div>
+    <select id="sel-${team}" class="sel w-full rounded-md border-2 ${s.sel} px-4 font-display text-lg font-bold uppercase tracking-wider" style="height:3.5rem">${opts}</select>
+    <div class="grid grid-cols-2 gap-3" aria-hidden="true">${figure('Vista superior','top',team)}${figure('Vista lateral','side',team)}</div>
+    <dl id="dims-${team}" class="grid grid-cols-2 gap-2 text-center sm:grid-cols-4"></dl>
+    <p id="how-${team}" class="min-h-[3rem] text-sm leading-snug text-muted-foreground"></p>
+  </section>`;
+}
+const ROWS = [
+  ...Object.entries(PERF).map(([k, label]) => ({ label, group:'perf', val:h => h.perf[k], max:100, fmt:v => String(v), win:true, delta:v => (v>0?'+':'')+v.toFixed(0) })),
+  { label:'Longitud', group:'dim', val:h => h.length, max:MAXD.length, fmt:v => v.toFixed(1), win:true, delta:v => (v>0?'+':'')+v.toFixed(1)+' uu' },
+  { label:'Anchura', group:'dim', val:h => h.width, max:MAXD.width, fmt:v => v.toFixed(1), win:true, delta:v => (v>0?'+':'')+v.toFixed(1)+' uu' },
+  { label:'Altura', group:'dim', val:h => h.height, max:MAXD.height, fmt:v => v.toFixed(1), win:true, delta:v => (v>0?'+':'')+v.toFixed(1)+' uu' },
+  { label:'Inclinación', group:'dim', val:h => h.angle, max:MAXD.angle, fmt:v => (v>0?'+':'')+v.toFixed(2)+'°', win:false, delta:v => (v>0?'+':'')+v.toFixed(2)+'°' }
+];
+const rowHTML = (r, i) => `<li class="flex flex-col gap-2">
+  <div class="flex items-baseline justify-between gap-2">
+    <span id="va-${i}" class="w-16 font-display text-sm font-bold tabular-nums"></span>
+    <span class="text-center text-sm font-semibold uppercase tracking-[0.15em] sm:text-base">${r.label}</span>
+    <span id="vb-${i}" class="w-16 text-right font-display text-sm font-bold tabular-nums"></span>
+  </div>
+  <div class="grid grid-cols-2 gap-1">
+    <div class="flex h-3 justify-end overflow-hidden rounded-l-sm bg-secondary"><div id="ba-${i}" class="h-full rounded-l-sm bg-gradient-to-l from-team-blue to-team-blue/40 transition-[width] duration-700 ease-out"></div></div>
+    <div class="flex h-3 justify-start overflow-hidden rounded-r-sm bg-secondary"><div id="bb-${i}" class="h-full rounded-r-sm bg-gradient-to-r from-team-orange to-team-orange/40 transition-[width] duration-700 ease-out"></div></div>
+  </div>
+  <p id="dl-${i}" class="text-center text-xs text-muted-foreground"></p></li>`;
+const list = g => ROWS.map((r, i) => r.group === g ? rowHTML(r, i) : '').join('');
+const h3 = t => `<h3 class="font-display text-xs font-bold uppercase tracking-[0.25em] text-muted-foreground">${t}</h3>`;
+
+$('app').innerHTML = `
+<div class="grid items-start gap-6 lg:grid-cols-[1fr_minmax(0,1.35fr)_1fr]">
+  ${panel('blue')}
+  <div class="order-last flex flex-col gap-4 lg:order-none">
+    <section aria-label="Comparativa de estadísticas" class="clip-corner relative flex flex-col gap-8 border border-border bg-card/80 p-5 backdrop-blur-sm sm:p-8">
+      <header class="flex flex-col items-center gap-4 text-center">
+        <p class="font-display text-xs uppercase tracking-[0.3em] text-muted-foreground">Análisis cara a cara</p>
+        <div class="flex w-full items-center justify-between gap-3">
+          <div class="flex min-w-0 flex-1 flex-col items-start"><span id="nameA" class="truncate max-w-full font-display text-lg font-black uppercase text-team-blue sm:text-2xl"></span><span id="scoreA" class="text-sm text-muted-foreground"></span></div>
+          <span class="flex h-12 w-12 shrink-0 items-center justify-center rounded-full border-2 border-border bg-background font-display text-sm font-black italic">VS</span>
+          <div class="flex min-w-0 flex-1 flex-col items-end"><span id="nameB" class="truncate max-w-full font-display text-lg font-black uppercase text-team-orange sm:text-2xl"></span><span id="scoreB" class="text-sm text-muted-foreground"></span></div>
+        </div>
+      </header>
+      <div class="flex flex-col gap-4">${h3('Rendimiento')}<ul class="flex flex-col gap-5">${list('perf')}</ul></div>
+      <div class="flex flex-col gap-4">${h3('Dimensiones de la hitbox')}<ul class="flex flex-col gap-5">${list('dim')}</ul>
+        <p class="text-center text-xs text-muted-foreground">Debajo de cada barra: diferencia B − A. En la inclinación las barras muestran el valor absoluto.</p></div>
+      <p id="same" class="hidden rounded-md border border-border bg-secondary/60 px-4 py-3 text-center text-sm text-muted-foreground"></p>
+    </section>
+    <button id="swap" type="button" class="mx-auto flex items-center gap-2 rounded-md border border-border bg-secondary px-4 py-2 font-display text-xs font-bold uppercase tracking-[0.2em] text-muted-foreground transition-colors hover:border-team-blue/60 hover:text-foreground">${ico(I.swap)} Intercambiar coches</button>
+  </div>
+  ${panel('orange')}
+</div>
+<section aria-labelledby="details-title" class="flex flex-col gap-5">
+  <div class="flex items-center gap-4"><h2 id="details-title" class="shrink-0 font-display text-lg font-black uppercase tracking-wider sm:text-xl">Ventajas de cada hitbox</h2>
+  <div class="h-px flex-1 bg-gradient-to-r from-team-blue/60 via-border to-team-orange/60"></div></div>
+  <div id="cards" class="grid gap-6 md:grid-cols-2"></div>
+</section>`;
+
+// ================= INTERACTIVIDAD =================
+function card(team) {
+  const s = T[team], car = carByName(state[team]), h = HB[car.hb];
+  const sib = LISTS[car.hb].join(', ');
+  const h4 = t => `<h4 class="font-display text-xs font-bold uppercase tracking-[0.2em]">${t}</h4>`;
+  return `<article class="clip-corner relative flex flex-col gap-6 border ${s.border} bg-card/80 p-5 backdrop-blur-sm sm:p-7">
+    <div class="absolute inset-y-0 left-0 w-1 ${s.bg} ${s.glow}"></div>
+    <header class="flex flex-col gap-1"><p class="font-display text-xs uppercase tracking-[0.25em] ${s.text}">${car.name} · ${h.tagline}</p>
+      <h3 class="font-display text-2xl font-black uppercase sm:text-3xl">Hitbox ${h.name}</h3></header>
+    <p class="text-pretty text-base leading-relaxed text-muted-foreground sm:text-lg">${h.desc}</p>
+    <div class="grid gap-6 md:grid-cols-2">
+      <div class="flex flex-col gap-3">${h4('Ventajas')}<ul class="flex flex-col gap-2.5">${h.pros.map(x => `<li class="flex gap-2.5 text-base leading-snug"><span class="mt-0.5 shrink-0 ${s.text}">${ico(I.check)}</span><span>${x}</span></li>`).join('')}</ul></div>
+      <div class="flex flex-col gap-3">${h4('Desventajas')}<ul class="flex flex-col gap-2.5">${h.cons.map(x => `<li class="flex gap-2.5 text-base leading-snug text-muted-foreground"><span class="mt-0.5 shrink-0">${ico(I.minus)}</span><span>${x}</span></li>`).join('')}</ul></div>
+    </div>
+    <div class="flex flex-col gap-3 border-t border-border pt-5">
+      <h4 class="flex items-center gap-2 font-display text-xs font-bold uppercase tracking-[0.2em]"><span class="${s.text}">${ico(I.target)}</span> Ideal para</h4>
+      <ul class="flex flex-wrap gap-2">${h.ideal.map(x => `<li class="rounded-sm border px-2.5 py-1 text-sm font-semibold uppercase tracking-wider ${s.tag}">${x}</li>`).join('')}</ul>
+      <p class="text-sm text-muted-foreground">Misma hitbox: ${sib}</p></div></article>`;
+}
+
+function update() {
+  const hA = hbOf('blue'), hB = hbOf('orange');
+  for (const t of ['blue', 'orange']) {
+    const h = hbOf(t);
+    $('tag-' + t).textContent = 'Hitbox ' + h.name;
+    $('how-' + t).textContent = HOW[state[t]] ? 'Cómo conseguirlo: ' + HOW[state[t]] : '';
+    $('top-' + t).style.cssText = `width:${h.length/140*100}%;height:${h.width/95*100}%`;
+    $('side-' + t).style.cssText = `width:${h.length/140*100}%;height:${h.height/95*100}%`;
+    $('dims-' + t).innerHTML = [['Largo',h.length.toFixed(1),'uu'],['Ancho',h.width.toFixed(1),'uu'],['Alto',h.height.toFixed(1),'uu'],['Ángulo',(h.angle>0?'+':'')+h.angle.toFixed(2),'°']]
+      .map(([l, v, u]) => `<div class="rounded-md border border-border bg-background/50 px-2 py-2"><dt class="text-xs uppercase tracking-widest text-muted-foreground">${l}</dt><dd class="font-display text-sm font-bold tabular-nums">${v}<span class="ml-0.5 text-[10px] text-muted-foreground">${u}</span></dd></div>`).join('');
+  }
+  let wA = 0, wB = 0, sA = 0, sB = 0, n = 0;
+  ROWS.forEach((r, i) => {
+    const a = r.val(hA), b = r.val(hB);
+    const aw = r.win && a > b, bw = r.win && b > a;
+    if (r.group === 'perf') { n++; sA += a; sB += b; if (aw) wA++; if (bw) wB++; }
+    $('va-' + i).textContent = r.fmt(a); $('vb-' + i).textContent = r.fmt(b);
+    $('va-' + i).className = 'w-16 font-display text-sm font-bold tabular-nums ' + (aw ? 'text-team-blue' : 'text-muted-foreground');
+    $('vb-' + i).className = 'w-16 text-right font-display text-sm font-bold tabular-nums ' + (bw ? 'text-team-orange' : 'text-muted-foreground');
+    $('ba-' + i).style.width = Math.min(100, Math.abs(a) / r.max * 100) + '%';
+    $('bb-' + i).style.width = Math.min(100, Math.abs(b) / r.max * 100) + '%';
+    $('ba-' + i).classList.toggle('glow-blue', aw); $('ba-' + i).classList.toggle('opacity-70', !aw);
+    $('bb-' + i).classList.toggle('glow-orange', bw); $('bb-' + i).classList.toggle('opacity-70', !bw);
+    const d = b - a, pct = a !== 0 ? d / Math.abs(a) * 100 : 0;
+    $('dl-' + i).textContent = d === 0 ? 'Sin diferencia' : `B − A: ${r.delta(d)}` + (r.group === 'dim' && r.label !== 'Inclinación' ? ` (${pct>0?'+':''}${pct.toFixed(1)}%)` : '');
+  });
+  const plural = w => w + (w === 1 ? ' victoria' : ' victorias');
+  $('nameA').textContent = state.blue; $('nameB').textContent = state.orange;
+  $('scoreA').textContent = `${plural(wA)} · OVR ${Math.round(sA / n)}`;
+  $('scoreB').textContent = `${plural(wB)} · OVR ${Math.round(sB / n)}`;
+  const same = hA === hB, p = $('same');
+  p.classList.toggle('hidden', !same);
+  p.innerHTML = same ? `Ambos coches comparten la hitbox <strong class="text-foreground">${hA.name}</strong>: en el juego se comportan de forma idéntica. La elección es puramente estética.` : '';
+  $('cards').innerHTML = card('blue') + card('orange');
+}
+
+// ================= SECCIONES EXTRA =================
+function sketch(h) {
+  const s = 1.5, L = h.length*s, W = h.width*s, H = h.height*s, cx = 190, x0 = cx-L/2, x1 = cx+L/2, ty = 40, sy = 252, gy = sy+H;
+  const dH = (y, t) => `<path d="M${x0} ${y}H${x1}M${x0} ${y-5}v10M${x1} ${y-5}v10"/><text class="t" x="${cx}" y="${y+19}" text-anchor="middle">${t}</text>`;
+  const dV = (ya, yb, t) => `<path d="M${x1+14} ${ya}V${yb}M${x1+9} ${ya}h10M${x1+9} ${yb}h10"/><text class="t" x="${x1+24}" y="${(ya+yb)/2+5}">${t}</text>`;
+  const box = (y, hh) => `<rect x="${x0}" y="${y}" width="${L}" height="${hh}" rx="10" fill="rgba(51,181,255,.12)"/><rect x="${x0+2}" y="${y-1.5}" width="${L}" height="${hh}" rx="10" opacity=".5"/>`;
+  const hatch = Array.from({length: Math.ceil((L+40)/12)}, (_, i) => `M${x0-20+i*12} ${gy}l-6 8`).join('');
+  const st = 'fill="none" stroke-linecap="round" stroke-linejoin="round" filter="url(#wobble)"';
+  return `<svg viewBox="0 0 380 374" class="sk grid-bg w-full rounded-md border border-border bg-background/60" role="img" aria-label="Boceto a mano del hitbox ${h.name} con sus medidas">
+    <g stroke="#33b5ff" stroke-width="2.2" ${st}>${box(ty, W)}<path d="M${x1-40} ${ty+W/2}h26m-9-6 9 6-9 6"/>${box(sy, H)}</g>
+    <g stroke="#ff8a3d" stroke-width="1.6" ${st}>${dH(ty+W+16, 'largo '+h.length.toFixed(2)+' uu')}${dV(ty, ty+W, h.width.toFixed(2)+' uu')}${dH(gy+16, 'largo '+h.length.toFixed(2)+' uu')}${dV(sy, gy, h.height.toFixed(2)+' uu')}</g>
+    <path d="M${x0-20} ${gy}H${x1+20}${hatch}" stroke="#9aa5c0" stroke-width="1.6" ${st}/>
+    <text class="cap" x="8" y="20">Vista superior</text><text class="cap" x="8" y="236">Vista lateral</text>
+    <text class="cap" x="${x1-27}" y="${ty+W/2+22}" text-anchor="middle">frente</text>
+    <text class="cap" x="${cx}" y="368" text-anchor="middle">inclinación ${(h.angle>0?'+':'')+h.angle.toFixed(2)}°</text></svg>`;
+}
+const sec = (title, body) => `<section class="flex flex-col gap-5"><div class="flex items-center gap-4"><h2 class="shrink-0 font-display text-lg font-black uppercase tracking-wider sm:text-xl">${title}</h2><div class="h-px flex-1 bg-gradient-to-r from-team-blue/60 via-border to-team-orange/60"></div></div>${body}</section>`;
+const box = c => `<div class="clip-corner border border-border bg-card/80 p-5 backdrop-blur-sm sm:p-6 ${c||''}">`;
+
+function buildExtra() {
+  const pro = [['Fennec',72],['Octane',18],['Dominus',7],['Otros',3]].map(([n, v]) => `<li class="flex items-center gap-3"><span class="w-24 font-display text-sm font-bold">${n}</span><div class="h-3 flex-1 overflow-hidden rounded-sm bg-secondary"><div class="h-full rounded-sm bg-gradient-to-r from-team-blue to-team-orange" style="width:${v}%"></div></div><span class="w-12 text-right font-display text-sm font-bold tabular-nums">${v}%</span></li>`).join('');
+  const explore = Object.entries(HB).map(([k, h]) => {
+    const [top, why] = TOP[k];
+    return `${box('flex flex-col gap-4')}
+      <header><h3 class="font-display text-xl font-black uppercase">Hitbox ${h.name}</h3><p class="text-sm text-muted-foreground">${h.tagline} · ${TOTAL[k]} coches</p></header>
+      ${sketch(h)}
+      <p class="text-base"><span class="font-semibold text-team-blue">Más usado: ${top}.</span> <span class="text-muted-foreground">${why}.</span></p>
+      <p class="text-sm text-muted-foreground">Cómo conseguirlo: ${HOW[top]}</p>
+      <p class="text-sm text-muted-foreground">Coches destacados: ${LISTS[k].join(', ')}.</p>
+      <div class="mt-auto flex gap-2">
+        <button type="button" data-team="blue" data-car="${top}" class="flex-1 rounded-md border border-team-blue/40 bg-team-blue/10 px-3 py-2 font-display text-[11px] font-bold uppercase tracking-wider text-team-blue">${top} como A</button>
+        <button type="button" data-team="orange" data-car="${top}" class="flex-1 rounded-md border border-team-orange/40 bg-team-orange/10 px-3 py-2 font-display text-[11px] font-bold uppercase tracking-wider text-team-orange">${top} como B</button>
+      </div></div>`;
+  }).join('');
+  const rows = TOP10.map(([n, hb, tier, use], i) => `<tr class="border-t border-border"><td class="py-2 pr-3 font-display text-team-blue">${i+1}</td><td class="py-2 pr-3 font-semibold">${n}</td><td class="py-2 pr-3">${hb}</td><td class="py-2 pr-3 font-display">${tier}</td><td class="py-2 pr-3 text-muted-foreground">${use}</td><td class="py-2 text-muted-foreground">${HOW[n]}</td></tr>`).join('');
+  $('extra').innerHTML =
+    `<p class="rounded-md border border-border bg-secondary/60 px-4 py-3 text-sm text-muted-foreground">Datos a 29 de septiembre de 2026. Los coches disponibles, los precios de la tienda y el uso profesional cambian con el tiempo.</p>` +
+    sec('Qué usan los profesionales', `${box()}<p class="mb-4 text-muted-foreground">En el mundial RLCS 2025 el Fennec y el Octane comparten hitbox, así que el 90% de los profesionales juega con el hitbox Octane.</p><ul class="flex flex-col gap-3">${pro}</ul></div>`) +
+    sec('Explora los 6 hitboxes', `<div class="grid gap-6 md:grid-cols-2 xl:grid-cols-3">${explore}</div>`) +
+    sec('Los 10 coches más usados', `${box('overflow-x-auto')}<table class="w-full min-w-[720px] text-left text-sm"><thead class="font-display text-xs uppercase tracking-wider text-muted-foreground"><tr><th class="pb-2">#</th><th class="pb-2">Coche</th><th class="pb-2">Hitbox</th><th class="pb-2">Tier</th><th class="pb-2">Uso</th><th class="pb-2">Cómo conseguirlo</th></tr></thead><tbody>${rows}</tbody></table></div>`) +
+    sec('Cómo conseguir coches', `<div class="grid gap-4 md:grid-cols-2 xl:grid-cols-3">${METHODS.map(([t, d]) => `${box()}<h3 class="mb-1 font-display text-sm font-bold uppercase tracking-wider text-team-orange">${t}</h3><p class="text-base leading-snug text-muted-foreground">${d}</p></div>`).join('')}</div>`);
+}
+$('extra').addEventListener('click', e => {
+  const b = e.target.closest('button[data-car]'); if (!b) return;
+  state[b.dataset.team] = b.dataset.car; $('sel-' + b.dataset.team).value = b.dataset.car;
+  update(); window.scrollTo({ top: 0, behavior: 'smooth' });
+});
+buildExtra();
+
+$('sel-blue').addEventListener('change', e => { state.blue = e.target.value; update(); });
+$('sel-orange').addEventListener('change', e => { state.orange = e.target.value; update(); });
+$('swap').addEventListener('click', () => {
+  [state.blue, state.orange] = [state.orange, state.blue];
+  $('sel-blue').value = state.blue; $('sel-orange').value = state.orange; update();
+});
+update();
+</script>
+</body>
+</html>
