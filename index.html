@@ -6,6 +6,9 @@
 <meta name="theme-color" content="#0b0f1f">
 <title>Hitbox Lab | Comparador de coches de Rocket League</title>
 <link rel="canonical" href="https://hitboxlabrl.vercel.app/">
+<link rel="alternate" hreflang="es" href="https://hitboxlabrl.vercel.app/">
+<link rel="alternate" hreflang="en" href="https://hitboxlabrl.vercel.app/en/">
+<link rel="alternate" hreflang="x-default" href="https://hitboxlabrl.vercel.app/en/">
 <meta name="description" content="Compara los hitboxes de los coches de Rocket League: dimensiones, rendimiento, bocetos a escala y cómo conseguir cada coche. Web de fans no oficial.">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E🚗%3C/text%3E%3C/svg%3E">
 <script src="https://cdn.tailwindcss.com"></script>
@@ -40,6 +43,7 @@ tailwind.config = { theme: { extend: {
 <body class="antialiased">
 <svg width="0" height="0" style="position:absolute" aria-hidden="true"><filter id="wobble"><feTurbulence type="fractalNoise" baseFrequency="0.035" numOctaves="2" seed="4" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="3"/></filter></svg>
 <main class="mx-auto flex min-h-screen w-full max-w-7xl flex-col gap-10 px-4 py-8 sm:px-6 lg:py-12">
+  <nav aria-label="Idioma" class="flex justify-end gap-2 font-display text-xs font-bold uppercase tracking-[0.2em]"><span aria-current="page" class="text-team-blue">ES</span><span class="text-border">|</span><a href="/en/" hreflang="en" lang="en" class="text-muted-foreground hover:text-foreground">EN</a></nav>
   <header class="flex flex-col gap-6">
     <div class="flex items-center gap-3">
       <span class="flex h-9 w-9 items-center justify-center rounded-md border border-team-blue/50 bg-team-blue/10 glow-blue text-team-blue" id="logo"></span>
