@@ -50,6 +50,11 @@ tailwind.config = { theme: { extend: {
   select.sel option, select.sel optgroup { background:#121830; color:#eef2fb; }
   select.sel:focus-visible, button:focus-visible { outline:2px solid #33b5ff; outline-offset:2px; }
   #sel-orange:focus-visible { outline-color:#ff8a3d; }
+  .lang-menu summary { list-style:none; }
+  .lang-menu summary::-webkit-details-marker { display:none; }
+  .lang-menu summary:focus-visible { outline:2px solid #33b5ff; outline-offset:2px; }
+  .lang-menu .lang-chevron { transition:transform .2s ease; }
+  .lang-menu[open] .lang-chevron { transform:rotate(180deg); }
   .sk text { font-family:'Caveat','Comic Sans MS',cursive; font-size:19px; fill:#eef2fb; stroke:none; }
   .sk text.t { fill:#ff8a3d; font-size:20px; } .sk text.cap { fill:#9aa5c0; font-size:16px; }
   @media (prefers-reduced-motion: reduce) { * { transition:none !important; } }
@@ -60,7 +65,19 @@ tailwind.config = { theme: { extend: {
 <body class="antialiased">
 <svg width="0" height="0" style="position:absolute" aria-hidden="true"><filter id="wobble"><feTurbulence type="fractalNoise" baseFrequency="0.035" numOctaves="2" seed="4" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="3"/></filter></svg>
 <main class="mx-auto flex min-h-screen w-full max-w-7xl flex-col gap-10 px-4 py-8 sm:px-6 lg:py-12">
-  <nav aria-label="Language" class="flex justify-end gap-2 font-display text-xs font-bold uppercase tracking-[0.2em]"><a href="/" hreflang="es" lang="es" class="text-muted-foreground hover:text-foreground">ES</a><span class="text-border">|</span><span aria-current="page" class="text-team-blue">EN</span></nav>
+  <nav aria-label="Language" class="flex justify-end">
+    <details class="lang-menu relative">
+      <summary aria-label="Change language" class="flex cursor-pointer items-center gap-2 rounded-md border border-border bg-card/80 px-3 py-2 font-display text-xs font-bold uppercase tracking-[0.18em] text-foreground backdrop-blur-sm transition-colors hover:border-team-blue/60 hover:bg-secondary">
+        <span aria-hidden="true" class="text-base leading-none">🌐</span>
+        <span>EN</span>
+        <svg class="lang-chevron h-3.5 w-3.5 text-muted-foreground" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
+      </summary>
+      <div class="absolute right-0 z-50 mt-2 w-36 overflow-hidden rounded-md border border-border bg-card shadow-xl shadow-black/30">
+        <span aria-current="page" class="flex items-center justify-between px-3 py-2 text-sm font-semibold text-team-blue"><span>English</span><span aria-hidden="true">✓</span></span>
+        <a href="/" hreflang="es" lang="es" class="block border-t border-border px-3 py-2 text-sm text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground">Español</a>
+      </div>
+    </details>
+  </nav>
   <header class="flex flex-col gap-6">
     <div class="flex items-center gap-3">
       <img src="/logo-mark.png" width="44" height="44" alt="Hitbox Lab logo: blue H and orange L letters" class="h-11 w-11 rounded-md">
