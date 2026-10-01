@@ -10,7 +10,24 @@
 <link rel="alternate" hreflang="en" href="https://hitboxlabrl.vercel.app/en/">
 <link rel="alternate" hreflang="x-default" href="https://hitboxlabrl.vercel.app/en/">
 <meta name="description" content="Compare Rocket League car hitboxes: dimensions, performance, scale sketches and how to get each car. Unofficial fan site.">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E🚗%3C/text%3E%3C/svg%3E">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Hitbox Lab">
+<meta property="og:title" content="Hitbox Lab | Rocket League Car Hitbox Comparison">
+<meta property="og:description" content="Compare Rocket League car hitboxes: dimensions, performance, scale sketches and how to get each car. Unofficial fan site.">
+<meta property="og:url" content="https://hitboxlabrl.vercel.app/en/">
+<meta property="og:image" content="https://hitboxlabrl.vercel.app/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Hitbox Lab logo: blue H and orange L letters">
+<meta property="og:locale" content="en_US">
+<meta property="og:locale:alternate" content="es_ES">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Hitbox Lab | Rocket League Car Hitbox Comparison">
+<meta name="twitter:description" content="Compare Rocket League car hitboxes: dimensions, performance, scale sketches and how to get each car. Unofficial fan site.">
+<meta name="twitter:image" content="https://hitboxlabrl.vercel.app/og-image.png">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="/favicon-32.png" sizes="32x32" type="image/png">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
 <script src="https://cdn.tailwindcss.com"></script>
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Rajdhani:wght@400;500;600;700&family=Caveat:wght@500;700&display=swap" rel="stylesheet">
 <script>
@@ -46,8 +63,8 @@ tailwind.config = { theme: { extend: {
   <nav aria-label="Language" class="flex justify-end gap-2 font-display text-xs font-bold uppercase tracking-[0.2em]"><a href="/" hreflang="es" lang="es" class="text-muted-foreground hover:text-foreground">ES</a><span class="text-border">|</span><span aria-current="page" class="text-team-blue">EN</span></nav>
   <header class="flex flex-col gap-6">
     <div class="flex items-center gap-3">
-      <span class="flex h-9 w-9 items-center justify-center rounded-md border border-team-blue/50 bg-team-blue/10 glow-blue text-team-blue" id="logo"></span>
-      <span class="font-display text-sm font-bold uppercase tracking-[0.3em]">Hitbox<span class="text-team-orange">Lab</span></span>
+      <img src="/logo-mark.png" width="44" height="44" alt="Hitbox Lab logo: blue H and orange L letters" class="h-11 w-11 rounded-md">
+      <span class="font-display text-lg font-bold uppercase tracking-[0.3em]">Hitbox<span class="text-team-orange">Lab</span></span>
     </div>
     <div class="flex flex-col gap-3">
       <h1 class="text-balance font-display text-3xl font-black uppercase leading-tight sm:text-5xl">Rocket League car hitbox
@@ -155,14 +172,14 @@ const MAXD = { length:131.49, width:84.67, height:41.66, angle:0.98 };
 const $ = id => document.getElementById(id);
 const ico = (p, c='h-4 w-4') => `<svg class="${c}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${p}</svg>`;
 const I = { gauge:'<path d="m12 14 4-4"/><path d="M3.34 19a10 10 0 1 1 17.32 0"/>', swap:'<path d="M8 3 4 7l4 4"/><path d="M4 7h16"/><path d="m16 21 4-4-4-4"/><path d="M20 17H4"/>',
-  check:'<path d="M20 6 9 17l-5-5"/>', minus:'<path d="M5 12h14"/>', target:'<circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/>' };
-$('logo').innerHTML = ico(I.gauge, 'h-5 w-5');
+  link:'<path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/>', check:'<path d="M20 6 9 17l-5-5"/>', minus:'<path d="M5 12h14"/>', target:'<circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/>' };
 
 const T = {
   blue:   { text:'text-team-blue', bg:'bg-team-blue', glow:'glow-blue', label:'Blue team', border:'border-team-blue/40', box:'border-team-blue bg-team-blue/15 glow-blue', tag:'border-team-blue/40 bg-team-blue/10 text-team-blue', sel:'border-team-blue/50' },
   orange: { text:'text-team-orange', bg:'bg-team-orange', glow:'glow-orange', label:'Orange team', border:'border-team-orange/40', box:'border-team-orange bg-team-orange/15 glow-orange', tag:'border-team-orange/40 bg-team-orange/10 text-team-orange', sel:'border-team-orange/50' }
 };
 const state = { blue:'Octane', orange:'Dominus' };
+try { const q = new URLSearchParams(location.search), a = q.get('a'), b = q.get('b'); if (a && carByName(a)) state.blue = a; if (b && carByName(b)) state.orange = b; } catch (e) {}
 const hbOf = t => HB[carByName(state[t]).hb];
 
 // ================= ESTRUCTURA =================
@@ -288,18 +305,30 @@ function update() {
   p.classList.toggle('hidden', !same);
   p.innerHTML = same ? `Both cars share the <strong class="text-foreground">${hA.name}</strong> hitbox: in game they behave identically. The choice is purely cosmetic.` : '';
   $('cards').innerHTML = card('blue') + card('orange');
+  syncUrl();
 }
 
 // ================= SECCIONES EXTRA =================
-function sketch(h) {
+const KIND = { octane:[.12,.30,.62,.80,.50,.38,.45], dominus:[.10,.36,.58,.78,.45,.34,.50], plank:[.10,.34,.56,.72,.35,.25,.42], breakout:[.08,.30,.48,.70,.40,.22,.45], hybrid:[.10,.32,.58,.78,.48,.34,.48], merc:[.06,.08,.70,.88,.62,.45,.90] };
+function sketch(h, k) {
   const s = 1.5, L = h.length*s, W = h.width*s, H = h.height*s, cx = 190, x0 = cx-L/2, x1 = cx+L/2, ty = 40, sy = 252, gy = sy+H;
   const dH = (y, t) => `<path d="M${x0} ${y}H${x1}M${x0} ${y-5}v10M${x1} ${y-5}v10"/><text class="t" x="${cx}" y="${y+19}" text-anchor="middle">${t}</text>`;
   const dV = (ya, yb, t) => `<path d="M${x1+14} ${ya}V${yb}M${x1+9} ${ya}h10M${x1+9} ${yb}h10"/><text class="t" x="${x1+24}" y="${(ya+yb)/2+5}">${t}</text>`;
   const box = (y, hh) => `<rect x="${x0}" y="${y}" width="${L}" height="${hh}" rx="10" fill="rgba(51,181,255,.12)"/><rect x="${x0+2}" y="${y-1.5}" width="${L}" height="${hh}" rx="10" opacity=".5"/>`;
   const hatch = Array.from({length: Math.ceil((L+40)/12)}, (_, i) => `M${x0-20+i*12} ${gy}l-6 8`).join('');
   const st = 'fill="none" stroke-linecap="round" stroke-linejoin="round" filter="url(#wobble)"';
+  const [rb, rr, rf, wf, hy, ny, tr] = KIND[k], X = f => x0 + f*L, Yg = g => gy - g*H;
+  const pts = [[.01,.16],[0,tr],[rb,tr],[rr,1],[rf,1],[wf,hy],[.985,hy-.03],[1,ny],[.99,.16]];
+  const poly = a => 'M' + a.map(([f, g]) => `${X(f).toFixed(1)} ${Yg(g).toFixed(1)}`).join('L');
+  const r = Math.min(H*.3, 17), wheel = f => `<circle cx="${X(f)}" cy="${gy-r}" r="${r}" fill="#121830"/><circle cx="${X(f)}" cy="${gy-r}" r="${r*.35}"/>`;
+  const cabW = W*.62, cy0 = ty + (W-cabW)/2;
+  const car = `<path d="${poly(pts)}Z"/><path d="${poly([[(rb+rr)/2+.03,tr+.07],[rr+.03,.86],[rf-.02,.86],[wf-.05,hy+.06]])}"/>${wheel(.22)}${wheel(.78)}` +
+    `<rect x="${x0}" y="${ty}" width="${L}" height="${W}" rx="16"/><rect x="${X(rr)}" y="${cy0}" width="${X(wf)-X(rr)}" height="${cabW}" rx="8"/><path d="M${X(rf)} ${cy0}v${cabW}"/><path d="M${x1-40} ${ty+W/2}h26m-9-6 9 6-9 6"/>` +
+    [.22,.78].map(f => `<rect x="${X(f)-.09*L}" y="${ty-5}" width="${.18*L}" height="9" rx="3"/><rect x="${X(f)-.09*L}" y="${ty+W-4}" width="${.18*L}" height="9" rx="3"/>`).join('');
   return `<svg viewBox="0 0 380 374" class="sk grid-bg w-full rounded-md border border-border bg-background/60" role="img" aria-label="Hand-drawn sketch of the ${h.name} hitbox with its measurements">
-    <g stroke="#33b5ff" stroke-width="2.2" ${st}>${box(ty, W)}<path d="M${x1-40} ${ty+W/2}h26m-9-6 9 6-9 6"/>${box(sy, H)}</g>
+    <g stroke="#33b5ff" stroke-width="2" stroke-dasharray="7 5" ${st}>${box(ty, W)}${box(sy, H)}</g>
+    <g stroke="#eef2fb" stroke-width="2.3" ${st}>${car}</g>
+    <g stroke="#eef2fb" stroke-width="1.3" opacity=".4" transform="translate(1.6 -1.2)" ${st}>${car}</g>
     <g stroke="#ff8a3d" stroke-width="1.6" ${st}>${dH(ty+W+16, 'length '+h.length.toFixed(2)+' uu')}${dV(ty, ty+W, h.width.toFixed(2)+' uu')}${dH(gy+16, 'length '+h.length.toFixed(2)+' uu')}${dV(sy, gy, h.height.toFixed(2)+' uu')}</g>
     <path d="M${x0-20} ${gy}H${x1+20}${hatch}" stroke="#9aa5c0" stroke-width="1.6" ${st}/>
     <text class="cap" x="8" y="20">Top view</text><text class="cap" x="8" y="236">Side view</text>
@@ -315,7 +344,7 @@ function buildExtra() {
     const [top, why] = TOP[k];
     return `${box('flex flex-col gap-4')}
       <header><h3 class="font-display text-xl font-black uppercase">Hitbox ${h.name}</h3><p class="text-sm text-muted-foreground">${h.tagline} · ${TOTAL[k]} cars</p></header>
-      ${sketch(h)}
+      ${sketch(h, k)}<p class="text-xs text-muted-foreground">Illustrative silhouette: cars in each hitbox vary in shape. The dashed blue line is the hitbox.</p>
       <p class="text-base"><span class="font-semibold text-team-blue">Most used: ${top}.</span> <span class="text-muted-foreground">${why}.</span></p>
       <p class="text-sm text-muted-foreground">How to get it: ${HOW[top]}</p>
       <p class="text-sm text-muted-foreground">Featured cars: ${LISTS[k].join(', ')}.</p>
@@ -339,6 +368,20 @@ $('extra').addEventListener('click', e => {
 });
 buildExtra();
 
+const EN = document.documentElement.lang === 'en';
+function syncUrl() {
+  try {
+    const q = '?a=' + encodeURIComponent(state.blue) + '&b=' + encodeURIComponent(state.orange);
+    history.replaceState(null, '', q);
+    document.querySelectorAll('nav a[hreflang]').forEach(a => { a.href = a.getAttribute('href').split('?')[0] + q; });
+  } catch (e) {}
+}
+const shareLabel = EN ? 'Copy link' : 'Copiar enlace';
+$('swap').insertAdjacentHTML('afterend', `<button id="share" type="button" class="mx-auto flex items-center gap-2 rounded-md border border-border bg-secondary px-4 py-2 font-display text-xs font-bold uppercase tracking-[0.2em] text-muted-foreground transition-colors hover:border-team-orange/60 hover:text-foreground">${ico(I.link)} <span id="share-t">${shareLabel}</span></button>`);
+$('share').addEventListener('click', async () => {
+  try { await navigator.clipboard.writeText(location.href); $('share-t').textContent = EN ? 'Link copied' : 'Enlace copiado'; setTimeout(() => { $('share-t').textContent = shareLabel; }, 2000); }
+  catch (e) { window.prompt(EN ? 'Copy this link:' : 'Copia este enlace:', location.href); }
+});
 $('sel-blue').addEventListener('change', e => { state.blue = e.target.value; update(); });
 $('sel-orange').addEventListener('change', e => { state.orange = e.target.value; update(); });
 $('swap').addEventListener('click', () => {
